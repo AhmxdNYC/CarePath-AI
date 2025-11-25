@@ -72,6 +72,12 @@ CarePath-AI currently provides:
 
 The experience is designed to be simple, structured, and easy to understand.
 
+## Demo
+
+![CarePath-AI demo](demo.png)
+
+The current homepage pairs a refined hero section with the embedded triage workflow so visitors can see the intake and results flow in one glance.
+
 ## The Problem We’re Tackling
 
 Many people struggle with:
