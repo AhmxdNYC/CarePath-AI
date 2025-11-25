@@ -1,7 +1,10 @@
 # Python / Backend
-backend/venv/
-backend/__pycache__/
-backend/*.pyc
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 
 # Environment variables - NEVER commit these!
 .env
@@ -9,13 +12,35 @@ backend/*.pyc
 .env.*
 !.env.example
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
 # OS
 .DS_Store
 *.pem
+Thumbs.db
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-*
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
 
