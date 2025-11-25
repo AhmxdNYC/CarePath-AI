@@ -1,12 +1,23 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 
 app = FastAPI()
+
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Next.js default ports
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -50,4 +61,8 @@ def generate_care_pathway(data: TriageInput):
         ]
     )
 
-    return response.choices[0].message
+    # Parse the JSON content from the response
+    content = response.choices[0].message.content
+    if content:
+        return json.loads(content)
+    return {"error": "No response from OpenAI"}
