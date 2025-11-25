@@ -85,6 +85,16 @@ export default function CarePathFormPanel() {
 		}, 300);
 	};
 
+	const handleReset = () => {
+		setSymptoms('');
+		setAge('');
+		setGoal('');
+		setDuration('');
+		setResult(null);
+		setError(null);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	};
+
 	return (
 		<div className='space-y-6'>
 			<div className='rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
@@ -108,15 +118,23 @@ export default function CarePathFormPanel() {
 						<div ref={resultRef}>
 							<CarePathwayResults result={result} />
 						</div>
-						<button
-							type='button'
-							onClick={handleDownload}
-							className='inline-flex items-center rounded-md bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'>
-							Download as PDF
-						</button>
+						<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+							<button
+								type='button'
+								onClick={handleDownload}
+								className='inline-flex items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'>
+								Download as PDF
+							</button>
+							<button
+								type='button'
+								onClick={handleReset}
+								className='inline-flex items-center justify-center rounded-lg border border-cyan-200 px-6 py-3 text-sm font-semibold text-cyan-700 transition-colors hover:bg-cyan-50'>
+								New Assessment
+							</button>
+						</div>
 						<p className='text-xs text-slate-500'>
-							The PDF includes only your generated plan for a clean, shareable copy. Remember to save it in
-							a secure location.
+							The PDF includes only your generated plan for a clean, shareable
+							copy. Remember to save it in a secure location.
 						</p>
 					</div>
 				)}
