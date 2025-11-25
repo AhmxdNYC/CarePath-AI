@@ -111,7 +111,7 @@ export default function TriageForm({
 				<button
 					type='submit'
 					disabled={loading}
-					className='w-full bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 text-lg'>
+					className='w-full bg-cyan-700 hover:bg-cyan-800 disabled:bg-cyan-300 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 text-lg'>
 					{loading ? 'Generating Your Care Pathway...' : 'Get Care Pathway'}
 				</button>
 			</form>
