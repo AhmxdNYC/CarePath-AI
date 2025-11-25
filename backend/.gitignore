@@ -2,8 +2,12 @@
 backend/venv/
 backend/__pycache__/
 backend/*.pyc
-backend/.env
-backend/.env.local
+
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.*
+!.env.example
 
 # OS
 .DS_Store
