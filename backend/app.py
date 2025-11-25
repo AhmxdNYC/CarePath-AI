@@ -36,7 +36,6 @@ async def startup_event():
 
 # Include database routes
 app.include_router(db_router)
-
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("OPENAI_API_KEY not found in environment variables. Please check your .env file.")
