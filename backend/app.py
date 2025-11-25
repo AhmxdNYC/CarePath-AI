@@ -109,10 +109,11 @@ def generate_care_pathway(data: TriageInput, db: Session = Depends(get_db)):
             db.commit()
             db.refresh(db_triage)
             result["saved_id"] = db_triage.id  # Add the database ID to the response
+            logger.info(f"✅ Successfully saved triage result to database - ID: {db_triage.id}, Age: {data.age}, Symptoms: {data.symptoms[:50]}...")
         except Exception as e:
             # Log error but don't fail the request
             db.rollback()
-            logger.error(f"Error saving to database: {str(e)}")
+            logger.error(f"❌ Error saving to database: {str(e)}")
         
         return result
     return {"error": "No response from OpenAI"}
