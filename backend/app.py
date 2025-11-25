@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 import os
 import json
+import logging
 
 # Database imports
 from db.routes import router as db_router
@@ -13,6 +14,13 @@ from db.database import init_db, get_db
 from db.models import TriageResult
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -31,8 +39,8 @@ async def startup_event():
     try:
         init_db()
     except Exception as e:
-        print(f"Database initialization failed: {str(e)}")
-        print("Server will continue without database features.")
+        logger.error(f"Database initialization failed: {str(e)}")
+        logger.warning("Server will continue without database features.")
 
 # Include database routes
 app.include_router(db_router)
@@ -104,7 +112,7 @@ def generate_care_pathway(data: TriageInput, db: Session = Depends(get_db)):
         except Exception as e:
             # Log error but don't fail the request
             db.rollback()
-            print(f"Error saving to database: {str(e)}")
+            logger.error(f"Error saving to database: {str(e)}")
         
         return result
     return {"error": "No response from OpenAI"}

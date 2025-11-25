@@ -15,8 +15,10 @@ createdb carepath_db 2>/dev/null && echo "Database 'carepath_db' created success
 
 echo ""
 echo "Database setup complete!"
-echo "Make sure your .env file has the correct DATABASE_URL:"
+echo ""
+echo "⚠️  IMPORTANT: Make sure your .env file has the DATABASE_URL set:"
 echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/carepath_db"
 echo ""
 echo "Replace 'postgres:postgres' with your actual PostgreSQL username:password"
+echo "The application will NOT start without DATABASE_URL in your .env file."
 
