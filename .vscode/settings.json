@@ -1,0 +1,9 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/carepath-ai/src/backend/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/carepath-ai/src/backend"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "basic"
+}
+
