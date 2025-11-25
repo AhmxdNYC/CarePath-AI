@@ -28,7 +28,8 @@ CarePath-AI aims to reduce confusion by giving users structured clarity and acti
 
 ## ⚙️ Tech Stack
 
-- **Next.js (TypeScript)** – frontend + backend API routes
+- **Next.js (TypeScript)** – frontend
+- **FastAPI (Python)** – backend API
 - **OpenAI API** – structured care pathway generation
 - **TailwindCSS** – UI
 - **PostgreSQL (optional)** – saving care history
