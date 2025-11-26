@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useReducer } from 'react';
+import { useRouter } from 'next/navigation';
 import TriageForm from '@/app/triage/components/TriageForm';
 import CarePathwayResults from '@/app/triage/components/CarePathwayResults';
 import ErrorDisplay from '@/app/triage/components/ErrorDisplay';
@@ -55,7 +56,10 @@ function formReducer(state: FormState, action: FormAction): FormState {
 	}
 }
 
+const STORAGE_KEY = 'carepath_result';
+
 export default function CarePathFormPanel() {
+	const router = useRouter();
 	const [state, dispatch] = useReducer(formReducer, initialState);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -75,6 +79,13 @@ export default function CarePathFormPanel() {
 				type: 'SUBMIT_ERROR',
 				error: err instanceof Error ? err.message : 'Something went wrong',
 			});
+		}
+	};
+
+	const handleViewResults = () => {
+		if (state.result) {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(state.result));
+			router.push('/results');
 		}
 	};
 
@@ -105,8 +116,22 @@ export default function CarePathFormPanel() {
 				{state.error && <ErrorDisplay error={state.error} />}
 
 				{state.result && (
-					<div className='mt-6'>
+					<div className='mt-6 space-y-4'>
 						<CarePathwayResults result={state.result} />
+						<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+							<button
+								type='button'
+								onClick={handleViewResults}
+								className='inline-flex items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'>
+								View & Print Results
+							</button>
+							<button
+								type='button'
+								onClick={() => dispatch({ type: 'RESET' })}
+								className='inline-flex items-center justify-center rounded-lg border border-cyan-200 px-6 py-3 text-sm font-semibold text-cyan-700 transition-colors hover:bg-cyan-50'>
+								New Assessment
+							</button>
+						</div>
 					</div>
 				)}
 			</div>
