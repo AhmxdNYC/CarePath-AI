@@ -1,123 +1,137 @@
 'use client';
 
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useReducer } from 'react';
+import { useRouter } from 'next/navigation';
 import TriageForm from '@/app/triage/components/TriageForm';
 import CarePathwayResults from '@/app/triage/components/CarePathwayResults';
 import ErrorDisplay from '@/app/triage/components/ErrorDisplay';
 import { submitTriageForm } from '@/app/triage/utils/api';
 import { TriageResponse } from '@/app/triage/utils/types';
 
+interface FormState {
+	symptoms: string;
+	age: string;
+	goal: string;
+	duration: string;
+	loading: boolean;
+	result: TriageResponse | null;
+	error: string | null;
+}
+
+type FormAction =
+	| {
+			type: 'UPDATE_FIELD';
+			field: 'symptoms' | 'age' | 'goal' | 'duration';
+			value: string;
+	  }
+	| { type: 'SUBMIT_START' }
+	| { type: 'SUBMIT_SUCCESS'; result: TriageResponse }
+	| { type: 'SUBMIT_ERROR'; error: string }
+	| { type: 'RESET' };
+
+const initialState: FormState = {
+	symptoms: '',
+	age: '',
+	goal: '',
+	duration: '',
+	loading: false,
+	result: null,
+	error: null,
+};
+
+function formReducer(state: FormState, action: FormAction): FormState {
+	switch (action.type) {
+		case 'UPDATE_FIELD':
+			return { ...state, [action.field]: action.value };
+		case 'SUBMIT_START':
+			return { ...state, loading: true, error: null };
+		case 'SUBMIT_SUCCESS':
+			return { ...state, loading: false, result: action.result, error: null };
+		case 'SUBMIT_ERROR':
+			return { ...state, loading: false, result: null, error: action.error };
+		case 'RESET':
+			return initialState;
+		default:
+			return state;
+	}
+}
+
+const STORAGE_KEY = 'carepath_result';
+
 export default function CarePathFormPanel() {
-	const [symptoms, setSymptoms] = useState('');
-	const [age, setAge] = useState('');
-	const [goal, setGoal] = useState('');
-	const [duration, setDuration] = useState('');
-	const [loading, setLoading] = useState(false);
-	const [result, setResult] = useState<TriageResponse | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const resultRef = useRef<HTMLDivElement | null>(null);
+	const router = useRouter();
+	const [state, dispatch] = useReducer(formReducer, initialState);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setLoading(true);
-		setError(null);
+		dispatch({ type: 'SUBMIT_START' });
 
 		try {
 			const data = await submitTriageForm({
-				symptoms,
-				age: parseInt(age, 10),
-				goal,
-				duration,
+				symptoms: state.symptoms,
+				age: parseInt(state.age, 10),
+				goal: state.goal,
+				duration: state.duration,
 			});
-			setResult(data);
+			dispatch({ type: 'SUBMIT_SUCCESS', result: data });
 		} catch (err) {
-			setResult(null);
-			setError(err instanceof Error ? err.message : 'Something went wrong');
-		} finally {
-			setLoading(false);
+			dispatch({
+				type: 'SUBMIT_ERROR',
+				error: err instanceof Error ? err.message : 'Something went wrong',
+			});
 		}
 	};
 
-	const handleDownload = () => {
-		if (!resultRef.current) return;
-
-		const printWindow = window.open('', '_blank', 'width=900,height=700');
-		if (!printWindow) return;
-
-		const content = resultRef.current.innerHTML;
-		printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>CarePath Results</title>
-          <style>
-            body {
-              font-family: 'Inter', Arial, sans-serif;
-              padding: 32px;
-              color: #0f172a;
-              background: #f8fafc;
-            }
-            h2, h3, h4 {
-              color: #0f172a;
-            }
-            p, li, span, div {
-              font-size: 14px;
-              line-height: 1.5;
-              color: #1e293b;
-            }
-            .section {
-              margin-bottom: 24px;
-              padding-bottom: 16px;
-              border-bottom: 1px solid #e2e8f0;
-            }
-          </style>
-        </head>
-        <body>
-          ${content}
-        </body>
-      </html>
-    `);
-		printWindow.document.close();
-		printWindow.focus();
-		setTimeout(() => {
-			printWindow.print();
-			printWindow.close();
-		}, 300);
+	const handleViewResults = () => {
+		if (state.result) {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(state.result));
+			router.push('/results');
+		}
 	};
 
 	return (
 		<div className='space-y-6'>
 			<div className='rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
 				<TriageForm
-					symptoms={symptoms}
-					age={age}
-					goal={goal}
-					duration={duration}
-					loading={loading}
-					onSymptomsChange={setSymptoms}
-					onAgeChange={setAge}
-					onGoalChange={setGoal}
-					onDurationChange={setDuration}
+					symptoms={state.symptoms}
+					age={state.age}
+					goal={state.goal}
+					duration={state.duration}
+					loading={state.loading}
+					onSymptomsChange={(value) =>
+						dispatch({ type: 'UPDATE_FIELD', field: 'symptoms', value })
+					}
+					onAgeChange={(value) =>
+						dispatch({ type: 'UPDATE_FIELD', field: 'age', value })
+					}
+					onGoalChange={(value) =>
+						dispatch({ type: 'UPDATE_FIELD', field: 'goal', value })
+					}
+					onDurationChange={(value) =>
+						dispatch({ type: 'UPDATE_FIELD', field: 'duration', value })
+					}
 					onSubmit={handleSubmit}
 				/>
 
-				{error && <ErrorDisplay error={error} />}
+				{state.error && <ErrorDisplay error={state.error} />}
 
-				{result && (
+				{state.result && (
 					<div className='mt-6 space-y-4'>
-						<div ref={resultRef}>
-							<CarePathwayResults result={result} />
+						<CarePathwayResults result={state.result} />
+						<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+							<button
+								type='button'
+								onClick={handleViewResults}
+								className='inline-flex items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'>
+								View & Print Results
+							</button>
+							<button
+								type='button'
+								onClick={() => dispatch({ type: 'RESET' })}
+								className='inline-flex items-center justify-center rounded-lg border border-cyan-200 px-6 py-3 text-sm font-semibold text-cyan-700 transition-colors hover:bg-cyan-50'>
+								New Assessment
+							</button>
 						</div>
-						<button
-							type='button'
-							onClick={handleDownload}
-							className='inline-flex items-center rounded-md bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'>
-							Download as PDF
-						</button>
-						<p className='text-xs text-slate-500'>
-							The PDF includes only your generated plan for a clean, shareable copy. Remember to save it in
-							a secure location.
-						</p>
 					</div>
 				)}
 			</div>
