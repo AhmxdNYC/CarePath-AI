@@ -6,12 +6,6 @@ __pycache__/
 *.pyd
 .Python
 
-# Environment variables - NEVER commit these!
-.env
-.env.local
-.env.*
-!.env.example
-
 # Database
 *.db
 *.sqlite

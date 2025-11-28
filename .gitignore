@@ -1,0 +1,76 @@
+# Environment Variables
+.env
+.env.local
+.env.*
+!.env.example
+
+# Python / Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Node / Frontend
+node_modules/
+carepath-ai/node_modules/
+carepath-ai/.next/
+carepath-ai/out/
+carepath-ai/build/
+carepath-ai/.pnp
+carepath-ai/.pnp.*
+carepath-ai/.yarn/*
+!carepath-ai/.yarn/patches
+!carepath-ai/.yarn/plugins
+!carepath-ai/.yarn/releases
+!carepath-ai/.yarn/versions
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+*.code-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+carepath-ai/coverage/
+
+# TypeScript
+*.tsbuildinfo
+carepath-ai/next-env.d.ts
+
+# Vercel
+carepath-ai/.vercel
+
+# Misc
+*.pem
+.DS_Store
+

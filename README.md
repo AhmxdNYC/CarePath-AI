@@ -16,6 +16,84 @@ CarePath-AI generates a structured, educational care pathway from a short sympto
 
 The goal is to offer simple, easy-to-understand guidance for users who often feel unsure about what their symptoms might mean or what to do next.
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- Python 3.8+
+- PostgreSQL (optional, for database features)
+- OpenAI API key
+
+### Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd CarePath-AI
+   ```
+
+2. **Set up environment variables**
+
+   ```bash
+   cp .env.example .env
+   # Edit .env and fill in your values:
+   # - OPENAI_API_KEY (required)
+   # - DATABASE_URL (required if using database)
+   # - BACKEND_URL (optional, defaults to http://localhost:8000)
+   ```
+
+3. **Set up backend**
+
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+4. **Set up frontend**
+
+   ```bash
+   cd carepath-ai
+   npm install
+   ```
+
+5. **Set up database (optional)**
+   ```bash
+   cd backend
+   bash setup_database.sh
+   ```
+
+### Running the Application
+
+**Option 1: Run both servers together (recommended)**
+
+```bash
+# From project root
+npm run dev
+# OR
+./start_dev.sh
+```
+
+**Option 2: Run servers separately**
+
+```bash
+# Terminal 1 - Backend
+cd backend
+bash start_server.sh
+
+# Terminal 2 - Frontend
+cd carepath-ai
+npm run dev
+```
+
+The application will be available at:
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+
 ## 🎬 Demo
 
 ![Demo](Demo.png)
