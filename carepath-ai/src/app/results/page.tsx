@@ -4,36 +4,38 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CarePathwayResults from '@/app/triage/components/CarePathwayResults';
 import { TriageResponse } from '@/app/triage/utils/types';
+import { usePrint } from '@/hooks/usePrint';
 
 const STORAGE_KEY = 'carepath_result';
 
 export default function ResultsPage() {
 	const router = useRouter();
 	const [result, setResult] = useState<TriageResponse | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const { print } = usePrint({
+		pageTitle: 'CarePath Results',
+		restoreTitle: 'CarePath-AI',
+	});
 
 	useEffect(() => {
-		// Set page title for print
-		document.title = 'CarePath Results';
-		
-		const stored = localStorage.getItem(STORAGE_KEY);
-		if (stored) {
-			try {
-				setResult(JSON.parse(stored));
-			} catch {
+		try {
+			const stored = localStorage.getItem(STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored) as TriageResponse;
+				setResult(parsed);
+			} else {
 				router.push('/');
 			}
-		} else {
+		} catch (error) {
+			console.error('Error reading from localStorage:', error);
 			router.push('/');
+		} finally {
+			setIsLoading(false);
 		}
-
-		// Cleanup: restore original title when leaving
-		return () => {
-			document.title = 'CarePath-AI';
-		};
 	}, [router]);
 
 	const handlePrint = () => {
-		window.print();
+		print();
 	};
 
 	const handleBack = () => {
@@ -41,7 +43,7 @@ export default function ResultsPage() {
 		router.push('/');
 	};
 
-	if (!result) {
+	if (isLoading || !result) {
 		return (
 			<div className='min-h-screen bg-white flex items-center justify-center'>
 				<p className='text-gray-600'>Loading...</p>
@@ -51,7 +53,9 @@ export default function ResultsPage() {
 
 	return (
 		<>
-			<style jsx global>{`
+			<style
+				jsx
+				global>{`
 				@media print {
 					@page {
 						margin: 0.4in;
@@ -68,7 +72,9 @@ export default function ResultsPage() {
 			<div className='min-h-screen bg-white'>
 				{/* Print-only header */}
 				<div className='hidden print:block mb-4 print:mb-3'>
-					<h1 className='text-2xl font-bold text-black print:text-xl'>CarePath Results</h1>
+					<h1 className='text-2xl font-bold text-black print:text-xl'>
+						CarePath Results
+					</h1>
 					<p className='text-sm text-gray-600 print:text-xs'>
 						Generated on {new Date().toLocaleDateString()}
 					</p>
@@ -100,4 +106,3 @@ export default function ResultsPage() {
 		</>
 	);
 }
-

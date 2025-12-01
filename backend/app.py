@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+from pathlib import Path
 import os
 import json
 import logging
@@ -13,7 +14,10 @@ from db.routes import router as db_router
 from db.database import init_db, get_db
 from db.models import TriageResult
 
-load_dotenv()
+# Load .env from project root (parent directory)
+root_dir = Path(__file__).parent.parent
+env_path = root_dir / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # Configure logging
 logging.basicConfig(
