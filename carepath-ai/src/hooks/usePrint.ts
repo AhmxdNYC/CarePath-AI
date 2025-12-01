@@ -21,9 +21,9 @@ export function usePrint(options: UsePrintOptions = {}) {
 		}
 		window.print();
 		if (onAfterPrint) {
-			setTimeout(() => {
+			requestAnimationFrame(() => {
 				onAfterPrint();
-			}, 100);
+			});
 		}
 	}, [onBeforePrint, onAfterPrint]);
 
